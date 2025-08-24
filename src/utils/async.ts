@@ -1,5 +1,9 @@
 export type MaybePromise<T> = Promise<T> | T
 
+type BatchItem<T, R> = 
+  | { item: T; resolve: (value: R) => void; reject: (reason: unknown) => void }
+  | { item: T }
+
 export function wait<T = void>(durationMs: number, resolveWith?: T): Promise<T> {
   return new Promise((resolve) => setTimeout(resolve, durationMs, resolveWith))
 }
@@ -22,10 +26,7 @@ function releaseEventLoop(): Promise<void> {
 /**
  * Улучшенная версия requestIdleCallback с fallback и оптимизациями
  */
-export function requestIdleCallbackIfAvailable(
-  delayFallback: number,
-  deadlineFallback: number,
-): Promise<void> {
+export function requestIdleCallbackIfAvailable(delayFallback: number, deadlineFallback: number): Promise<void> {
   return new Promise((resolve) => {
     if (typeof requestIdleCallback === 'function') {
       requestIdleCallback(() => resolve(), { timeout: deadlineFallback })
@@ -39,31 +40,31 @@ export function requestIdleCallbackIfAvailable(
 /**
  * Параллельное выполнение с ограничением количества одновременных операций
  */
-export async function parallelWithLimit<T>(
+export async function parallelWithLimit<T, R>(
   items: T[],
-  processor: (item: T) => Promise<any>,
-  concurrencyLimit: number = 4
-): Promise<any[]> {
-  const results: any[] = []
-  const executing: Promise<any>[] = []
-  
+  processor: (item: T) => Promise<R>,
+  concurrencyLimit = 4,
+): Promise<R[]> {
+  const results: Promise<R>[] = []
+  const executing: Promise<R>[] = []
+
   for (const item of items) {
-    const promise = processor(item).then(result => {
+    const promise = processor(item).then((result) => {
       const index = executing.indexOf(promise)
       if (index > -1) {
         executing.splice(index, 1)
       }
       return result
     })
-    
+
     executing.push(promise)
     results.push(promise)
-    
+
     if (executing.length >= concurrencyLimit) {
       await Promise.race(executing)
     }
   }
-  
+
   return Promise.all(results)
 }
 
@@ -73,37 +74,40 @@ export async function parallelWithLimit<T>(
 export class PromiseCache<K, V> {
   private cache = new Map<K, Promise<V>>()
   private maxSize: number
-  
-  constructor(maxSize: number = 100) {
+
+  constructor(maxSize = 100) {
     this.maxSize = maxSize
   }
-  
+
   async get(key: K, factory: () => Promise<V>): Promise<V> {
     if (this.cache.has(key)) {
-      return this.cache.get(key)!
+      const cachedPromise = this.cache.get(key)
+      if (cachedPromise) {
+        return cachedPromise
+      }
     }
-    
+
     if (this.cache.size >= this.maxSize) {
       // Удаляем старые записи
       const firstKey = this.cache.keys().next().value
       this.cache.delete(firstKey)
     }
-    
+
     const promise = factory()
     this.cache.set(key, promise)
-    
+
     // Удаляем из кэша при ошибке
     promise.catch(() => {
       this.cache.delete(key)
     })
-    
+
     return promise
   }
-  
+
   clear(): void {
     this.cache.clear()
   }
-  
+
   get size(): number {
     return this.cache.size
   }
@@ -118,7 +122,7 @@ export function waitWithTimeout(ms: number, signal?: AbortSignal): Promise<void>
       reject(new Error('Operation aborted'))
       return
     }
-    
+
     const timeoutId = setTimeout(() => {
       if (signal?.aborted) {
         reject(new Error('Operation aborted'))
@@ -126,7 +130,7 @@ export function waitWithTimeout(ms: number, signal?: AbortSignal): Promise<void>
         resolve()
       }
     }, ms)
-    
+
     signal?.addEventListener('abort', () => {
       clearTimeout(timeoutId)
       reject(new Error('Operation aborted'))
@@ -139,27 +143,30 @@ export function waitWithTimeout(ms: number, signal?: AbortSignal): Promise<void>
  */
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
-  maxRetries: number = 3,
-  baseDelay: number = 1000
+  maxRetries = 3,
+  baseDelay = 1000,
 ): Promise<T> {
   let lastError: Error
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
     } catch (error) {
       lastError = error as Error
-      
+
       if (attempt === maxRetries) {
         break
       }
-      
+
       const delay = baseDelay * Math.pow(2, attempt)
       await waitWithTimeout(delay)
     }
   }
-  
-  throw lastError!
+
+  if (lastError) {
+    throw lastError
+  }
+  throw new Error('Unknown error occurred')
 }
 
 /**
@@ -171,35 +178,31 @@ export class BatchProcessor<T, R> {
   private processor: (items: T[]) => Promise<R[]>
   private batchSize: number
   private batchTimeout: number
-  
-  constructor(
-    processor: (items: T[]) => Promise<R[]>,
-    batchSize: number = 10,
-    batchTimeout: number = 100
-  ) {
+
+  constructor(processor: (items: T[]) => Promise<R[]>, batchSize = 10, batchTimeout = 100) {
     this.processor = processor
     this.batchSize = batchSize
     this.batchTimeout = batchTimeout
   }
-  
+
   async add(item: T): Promise<R> {
     this.batch.push(item)
-    
+
     if (this.batch.length >= this.batchSize) {
       return this.processBatch()
     }
-    
+
     if (!this.processing) {
       this.scheduleProcessing()
     }
-    
+
     // Возвращаем промис, который разрешится при обработке батча
-    return new Promise((resolve, reject) => {
+    return new Promise<R>((resolve, reject) => {
       const index = this.batch.length - 1
-      this.batch[index] = { item, resolve, reject } as any
+      this.batch[index] = { item, resolve, reject } as BatchItem<T, R>
     })
   }
-  
+
   private scheduleProcessing(): void {
     setTimeout(() => {
       if (this.batch.length > 0) {
@@ -207,30 +210,30 @@ export class BatchProcessor<T, R> {
       }
     }, this.batchTimeout)
   }
-  
+
   private async processBatch(): Promise<R[]> {
     if (this.processing || this.batch.length === 0) {
       return []
     }
-    
+
     this.processing = true
     const currentBatch = [...this.batch]
     this.batch = []
-    
+
     try {
-      const results = await this.processor(currentBatch.map(b => 'item' in b ? b.item : b))
-      
+      const results = await this.processor(currentBatch.map((b) => ('item' in b ? b.item : b)))
+
       // Разрешаем промисы для элементов в батче
       currentBatch.forEach((batchItem, index) => {
         if ('resolve' in batchItem) {
           batchItem.resolve(results[index])
         }
       })
-      
+
       return results
     } catch (error) {
       // Отклоняем промисы при ошибке
-      currentBatch.forEach(batchItem => {
+      currentBatch.forEach((batchItem) => {
         if ('reject' in batchItem) {
           batchItem.reject(error)
         }
@@ -238,7 +241,7 @@ export class BatchProcessor<T, R> {
       throw error
     } finally {
       this.processing = false
-      
+
       if (this.batch.length > 0) {
         this.scheduleProcessing()
       }
@@ -265,7 +268,7 @@ export function isPromise<T>(value: PromiseLike<T> | unknown): value is PromiseL
  */
 export function awaitIfAsync<TResult, TError = unknown>(
   action: () => MaybePromise<TResult>,
-  callback: (...args: [success: true, result: TResult] | [success: false, error: TError]) => unknown,
+  callback: (...args: [success: true, result: TResult] | [success: false, error: TError]) => void,
 ): void {
   try {
     const returnedValue = action()

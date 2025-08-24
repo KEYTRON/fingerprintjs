@@ -9,7 +9,7 @@ import { runAllBenchmarks } from '../src/utils/benchmark'
 
 async function main() {
   console.log('🚀 Запуск бенчмарков FingerprintJS...\n')
-  
+
   try {
     await runAllBenchmarks()
     console.log('\n✅ Все бенчмарки завершены успешно!')
