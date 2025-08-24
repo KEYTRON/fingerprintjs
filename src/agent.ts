@@ -136,9 +136,9 @@ function makeLazyGetResult(components: BuiltinComponents, enableCache = true): G
             return cached
           }
         }
-        
+
         visitorIdCache = hashComponents(this.components)
-        
+
         if (enableCache) {
           // Сохраняем в кэш
           const cacheKey = JSON.stringify(components)
@@ -183,7 +183,7 @@ function makeAgent(getComponents: () => Promise<BuiltinComponents>, debug?: bool
     async get(options) {
       const startTime = Date.now()
       const components = await getComponents()
-      
+
       // Проверяем, изменились ли компоненты
       if (lastComponents && lastResult && enableCache) {
         const componentsChanged = JSON.stringify(components) !== JSON.stringify(lastComponents)
@@ -192,9 +192,9 @@ function makeAgent(getComponents: () => Promise<BuiltinComponents>, debug?: bool
           return lastResult
         }
       }
-      
+
       const result = makeLazyGetResult(components, enableCache)
-      
+
       // Кэшируем результат
       if (enableCache) {
         lastComponents = components
@@ -247,14 +247,14 @@ export async function load(options: Readonly<LoadOptions> = {}): Promise<Agent> 
     monitor()
   }
   const { delayFallback, debug, enableCache = true, cacheTTL = 300000 } = options
-  
+
   // Очищаем устаревшие записи кэша
   if (enableCache && cacheTTL > 0) {
     setTimeout(() => {
       hashCache.clear()
     }, cacheTTL)
   }
-  
+
   await prepareForSources(delayFallback)
   const getComponents = loadBuiltinSources({ cache: {}, debug })
   return makeAgent(getComponents, debug, enableCache)

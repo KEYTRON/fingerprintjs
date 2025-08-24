@@ -1,15 +1,15 @@
-import { Builder, By, until, WebDriver } from 'selenium-webdriver';
-import { Options } from 'selenium-webdriver/chrome';
+import { Builder, By, until, WebDriver } from 'selenium-webdriver'
+import { Options } from 'selenium-webdriver/chrome'
 
 /**
  * Упрощенный пример использования Selenium WebDriver
  * Работает с локальными HTML файлами для демонстрации
  */
 class SeleniumSimpleExample {
-  private driver: WebDriver | null;
+  private driver: WebDriver | null
 
   constructor() {
-    this.driver = null;
+    this.driver = null
   }
 
   /**
@@ -17,24 +17,21 @@ class SeleniumSimpleExample {
    */
   async initializeDriver(): Promise<void> {
     try {
-      const chromeOptions = new Options();
-      
-      // Настройки для лучшей производительности
-      chromeOptions.addArguments('--no-sandbox');
-      chromeOptions.addArguments('--disable-dev-shm-usage');
-      chromeOptions.addArguments('--disable-gpu');
-      chromeOptions.addArguments('--disable-extensions');
-      chromeOptions.addArguments('--disable-plugins');
-      
-      this.driver = await new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(chromeOptions)
-        .build();
+      const chromeOptions = new Options()
 
-      console.log('✅ Драйвер Chrome успешно инициализирован');
+      // Настройки для лучшей производительности
+      chromeOptions.addArguments('--no-sandbox')
+      chromeOptions.addArguments('--disable-dev-shm-usage')
+      chromeOptions.addArguments('--disable-gpu')
+      chromeOptions.addArguments('--disable-extensions')
+      chromeOptions.addArguments('--disable-plugins')
+
+      this.driver = await new Builder().forBrowser('chrome').setChromeOptions(chromeOptions).build()
+
+      console.log('✅ Драйвер Chrome успешно инициализирован')
     } catch (error) {
-      console.error('❌ Ошибка инициализации драйвера:', error);
-      throw error;
+      console.error('❌ Ошибка инициализации драйвера:', error)
+      throw error
     }
   }
 
@@ -232,15 +229,15 @@ class SeleniumSimpleExample {
           </script>
       </body>
       </html>
-    `;
+    `
 
-    const fs = require('fs');
-    const path = require('path');
-    const filePath = path.join(__dirname, 'selenium-test.html');
-    fs.writeFileSync(filePath, html);
-    
-    console.log('✅ Тестовая страница создана:', filePath);
-    return filePath;
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.join(__dirname, 'selenium-test.html')
+    fs.writeFileSync(filePath, html)
+
+    console.log('✅ Тестовая страница создана:', filePath)
+    return filePath
   }
 
   /**
@@ -248,17 +245,17 @@ class SeleniumSimpleExample {
    */
   async openTestPage(filePath: string): Promise<void> {
     try {
-      if (!this.driver) throw new Error('Драйвер не инициализирован');
-      
-      const fileUrl = `file://${filePath}`;
-      await this.driver.get(fileUrl);
-      console.log('✅ Тестовая страница открыта');
-      
+      if (!this.driver) throw new Error('Драйвер не инициализирован')
+
+      const fileUrl = `file://${filePath}`
+      await this.driver.get(fileUrl)
+      console.log('✅ Тестовая страница открыта')
+
       // Ждем загрузки страницы
-      await this.driver.wait(until.titleContains('Selenium Test Page'), 10000);
+      await this.driver.wait(until.titleContains('Selenium Test Page'), 10000)
     } catch (error) {
-      console.error('❌ Ошибка открытия тестовой страницы:', error);
-      throw error;
+      console.error('❌ Ошибка открытия тестовой страницы:', error)
+      throw error
     }
   }
 
@@ -267,29 +264,29 @@ class SeleniumSimpleExample {
    */
   async fillForm(): Promise<void> {
     try {
-      if (!this.driver) throw new Error('Драйвер не инициализирован');
-      
-      console.log('📝 Заполнение формы...');
-      
+      if (!this.driver) throw new Error('Драйвер не инициализирован')
+
+      console.log('📝 Заполнение формы...')
+
       // Очистка и заполнение полей
-      await this.driver.findElement(By.id('name')).clear();
-      await this.driver.findElement(By.id('name')).sendKeys('Тестовый Пользователь');
-      
-      await this.driver.findElement(By.id('email')).clear();
-      await this.driver.findElement(By.id('email')).sendKeys('test@example.com');
-      
-      await this.driver.findElement(By.id('message')).clear();
-      await this.driver.findElement(By.id('message')).sendKeys('Это автоматически заполненное сообщение от Selenium!');
-      
+      await this.driver.findElement(By.id('name')).clear()
+      await this.driver.findElement(By.id('name')).sendKeys('Тестовый Пользователь')
+
+      await this.driver.findElement(By.id('email')).clear()
+      await this.driver.findElement(By.id('email')).sendKeys('test@example.com')
+
+      await this.driver.findElement(By.id('message')).clear()
+      await this.driver.findElement(By.id('message')).sendKeys('Это автоматически заполненное сообщение от Selenium!')
+
       // Выбор страны
-      const countrySelect = await this.driver.findElement(By.id('country'));
-      await countrySelect.click();
-      await this.driver.findElement(By.css('option[value="germany"]')).click();
-      
-      console.log('✅ Форма заполнена');
+      const countrySelect = await this.driver.findElement(By.id('country'))
+      await countrySelect.click()
+      await this.driver.findElement(By.css('option[value="germany"]')).click()
+
+      console.log('✅ Форма заполнена')
     } catch (error) {
-      console.error('❌ Ошибка заполнения формы:', error);
-      throw error;
+      console.error('❌ Ошибка заполнения формы:', error)
+      throw error
     }
   }
 
@@ -298,24 +295,24 @@ class SeleniumSimpleExample {
    */
   async submitForm(): Promise<void> {
     try {
-      if (!this.driver) throw new Error('Драйвер не инициализирован');
-      
-      console.log('📤 Отправка формы...');
-      
+      if (!this.driver) throw new Error('Драйвер не инициализирован')
+
+      console.log('📤 Отправка формы...')
+
       // Клик по кнопке отправки
-      await this.driver.findElement(By.id('submitBtn')).click();
-      
+      await this.driver.findElement(By.id('submitBtn')).click()
+
       // Ожидание результата
-      await this.driver.wait(until.elementLocated(By.id('result')), 5000);
-      
+      await this.driver.wait(until.elementLocated(By.id('result')), 5000)
+
       // Получение результата
-      const resultElement = await this.driver.findElement(By.id('result'));
-      const resultText = await resultElement.getText();
-      
-      console.log('✅ Форма отправлена. Результат:', resultText);
+      const resultElement = await this.driver.findElement(By.id('result'))
+      const resultText = await resultElement.getText()
+
+      console.log('✅ Форма отправлена. Результат:', resultText)
     } catch (error) {
-      console.error('❌ Ошибка отправки формы:', error);
-      throw error;
+      console.error('❌ Ошибка отправки формы:', error)
+      throw error
     }
   }
 
@@ -324,25 +321,25 @@ class SeleniumSimpleExample {
    */
   async getBrowserInfo(): Promise<void> {
     try {
-      if (!this.driver) throw new Error('Драйвер не инициализирован');
-      
-      console.log('🌐 Получение информации о браузере...');
-      
+      if (!this.driver) throw new Error('Драйвер не инициализирован')
+
+      console.log('🌐 Получение информации о браузере...')
+
       // Клик по кнопке информации
-      await this.driver.findElement(By.id('showInfoBtn')).click();
-      
+      await this.driver.findElement(By.id('showInfoBtn')).click()
+
       // Ожидание загрузки информации
-      await this.driver.wait(until.elementLocated(By.id('browserInfo')), 5000);
-      
+      await this.driver.wait(until.elementLocated(By.id('browserInfo')), 5000)
+
       // Получение информации
-      const infoElement = await this.driver.findElement(By.id('browserInfo'));
-      const infoText = await infoElement.getText();
-      
-      console.log('✅ Информация о браузере получена');
-      console.log(infoText);
+      const infoElement = await this.driver.findElement(By.id('browserInfo'))
+      const infoText = await infoElement.getText()
+
+      console.log('✅ Информация о браузере получена')
+      console.log(infoText)
     } catch (error) {
-      console.error('❌ Ошибка получения информации о браузере:', error);
-      throw error;
+      console.error('❌ Ошибка получения информации о браузере:', error)
+      throw error
     }
   }
 
@@ -351,15 +348,15 @@ class SeleniumSimpleExample {
    */
   async takeScreenshot(filename: string): Promise<void> {
     try {
-      if (!this.driver) throw new Error('Драйвер не инициализирован');
-      
-      const screenshot = await this.driver.takeScreenshot();
-      const fs = require('fs');
+      if (!this.driver) throw new Error('Драйвер не инициализирован')
+
+      const screenshot = await this.driver.takeScreenshot()
+      const fs = await import('fs');
       fs.writeFileSync(filename, screenshot, 'base64');
-      console.log(`✅ Скриншот сохранен в файл ${filename}`);
+      console.log(`✅ Скриншот сохранен в файл ${filename}`)
     } catch (error) {
-      console.error('❌ Ошибка создания скриншота:', error);
-      throw error;
+      console.error('❌ Ошибка создания скриншота:', error)
+      throw error
     }
   }
 
@@ -369,12 +366,12 @@ class SeleniumSimpleExample {
   async closeBrowser(): Promise<void> {
     try {
       if (this.driver) {
-        await this.driver.quit();
-        console.log('✅ Браузер закрыт');
+        await this.driver.quit()
+        console.log('✅ Браузер закрыт')
       }
     } catch (error) {
-      console.error('❌ Ошибка закрытия браузера:', error);
-      throw error;
+      console.error('❌ Ошибка закрытия браузера:', error)
+      throw error
     }
   }
 
@@ -383,47 +380,46 @@ class SeleniumSimpleExample {
    */
   async run(): Promise<void> {
     try {
-      console.log('🚀 Запуск упрощенного примера Selenium...');
-      
+      console.log('🚀 Запуск упрощенного примера Selenium...')
+
       // Инициализация драйвера
-      await this.initializeDriver();
-      
+      await this.initializeDriver()
+
       // Создание тестовой страницы
-      const testPagePath = await this.createTestPage();
-      
+      const testPagePath = await this.createTestPage()
+
       // Открытие тестовой страницы
-      await this.openTestPage(testPagePath);
-      
+      await this.openTestPage(testPagePath)
+
       // Пауза для загрузки автоматического заполнения
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
       // Заполнение формы
-      await this.fillForm();
-      
+      await this.fillForm()
+
       // Отправка формы
-      await this.submitForm();
-      
+      await this.submitForm()
+
       // Получение информации о браузере
-      await this.getBrowserInfo();
-      
+      await this.getBrowserInfo()
+
       // Создание скриншота
-      await this.takeScreenshot('selenium-test-results.png');
-      
-      console.log('✅ Упрощенный пример Selenium успешно выполнен!');
-      
+      await this.takeScreenshot('selenium-test-results.png')
+
+      console.log('✅ Упрощенный пример Selenium успешно выполнен!')
     } catch (error) {
-      console.error('❌ Ошибка выполнения примера:', error);
+      console.error('❌ Ошибка выполнения примера:', error)
     } finally {
       // Закрытие браузера
-      await this.closeBrowser();
+      await this.closeBrowser()
     }
   }
 }
 
 // Запуск примера
-if (require.main === module) {
-  const example = new SeleniumSimpleExample();
-  example.run().catch(console.error);
+if (typeof require !== 'undefined' && require.main === module) {
+  const example = new SeleniumSimpleExample()
+  example.run().catch(console.error)
 }
 
-export default SeleniumSimpleExample;
+export default SeleniumSimpleExample

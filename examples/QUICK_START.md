@@ -3,11 +3,13 @@
 ## ⚡ За 5 минут
 
 ### 1. Установка зависимостей
+
 ```bash
 yarn install
 ```
 
 ### 2. Запуск рабочего примера
+
 ```bash
 yarn selenium:simple
 ```
@@ -27,13 +29,14 @@ yarn selenium:simple
 
 ## 🔍 Результат
 
-- ✅ HTML файл: `examples/selenium-test.html`
-- ✅ Скриншот: `selenium-test-results.png`
-- ✅ Логи в консоли с подробной информацией
+-   ✅ HTML файл: `examples/selenium-test.html`
+-   ✅ Скриншот: `selenium-test-results.png`
+-   ✅ Логи в консоли с подробной информацией
 
 ## 🛠️ Настройка
 
 ### Chrome/Chromium
+
 ```bash
 # Установка браузера
 sudo apt-get install chromium-browser
@@ -43,23 +46,27 @@ chromium-browser --version
 ```
 
 ### ChromeDriver
+
 Автоматически устанавливается через npm пакет `chromedriver`
 
 ## 🚨 Возможные проблемы
 
 ### "ChromeDriver executable needs to be in PATH"
+
 ```bash
 # Решение: переустановить зависимости
 yarn install
 ```
 
 ### "session not created: This version of ChromeDriver only supports Chrome version X"
+
 ```bash
 # Решение: обновить ChromeDriver в package.json
 # Текущая версия: 139.0.0
 ```
 
 ### "Chrome не найден"
+
 ```bash
 # Решение: установить Chromium
 sudo apt-get install chromium-browser

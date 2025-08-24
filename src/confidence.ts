@@ -24,17 +24,17 @@ export default function getConfidence(components: BuiltinComponents): Confidence
 
 function getOpenConfidenceScore(components: BuiltinComponents): number {
   // Базовая оценка на основе платформы
-  let baseScore = getBasePlatformScore(components)
-  
+  const baseScore = getBasePlatformScore(components)
+
   // Анализируем качество и количество доступных компонентов
   const componentQuality = analyzeComponentQuality(components)
-  
+
   // Анализируем стабильность компонентов
   const stabilityScore = analyzeComponentStability(components)
-  
+
   // Комбинируем все факторы для финальной оценки
-  const finalScore = (baseScore * 0.4 + componentQuality * 0.4 + stabilityScore * 0.2)
-  
+  const finalScore = baseScore * 0.4 + componentQuality * 0.4 + stabilityScore * 0.2
+
   return Math.min(Math.max(finalScore, 0.1), 0.9) // Ограничиваем диапазон
 }
 
@@ -82,54 +82,61 @@ function analyzeComponentQuality(components: BuiltinComponents): number {
   let totalComponents = 0
   let validComponents = 0
   let highEntropyComponents = 0
-  
+
   for (const [key, component] of Object.entries(components)) {
     totalComponents++
-    
+
     if ('error' in component) {
       continue // Пропускаем компоненты с ошибками
     }
-    
+
     validComponents++
-    
+
     // Определяем компоненты с высокой энтропией
     if (isHighEntropyComponent(key, component)) {
       highEntropyComponents++
     }
   }
-  
+
   if (totalComponents === 0) return 0.1
-  
+
   const validityScore = validComponents / totalComponents
   const entropyScore = highEntropyComponents / totalComponents
-  
-  return (validityScore * 0.6 + entropyScore * 0.4)
+
+  return validityScore * 0.6 + entropyScore * 0.4
 }
 
 /**
  * Определяет, является ли компонент высокоэнтропийным
  */
-function isHighEntropyComponent(key: string, component: any): boolean {
+function isHighEntropyComponent(key: string, component: Component<unknown>): boolean {
   const highEntropyKeys = [
-    'canvas', 'webGlBasics', 'webGlExtensions', 'audio', 'fonts', 
-    'screenFrame', 'screenResolution', 'colorDepth', 'deviceMemory'
+    'canvas',
+    'webGlBasics',
+    'webGlExtensions',
+    'audio',
+    'fonts',
+    'screenFrame',
+    'screenResolution',
+    'colorDepth',
+    'deviceMemory',
   ]
-  
+
   if (highEntropyKeys.includes(key)) {
     return true
   }
-  
+
   // Проверяем длину значения для текстовых компонентов
   if (typeof component.value === 'string' && component.value.length > 10) {
     return true
   }
-  
+
   // Проверяем сложность объектов
   if (typeof component.value === 'object' && component.value !== null) {
     const complexity = JSON.stringify(component.value).length
     return complexity > 50
   }
-  
+
   return false
 }
 
@@ -139,45 +146,50 @@ function isHighEntropyComponent(key: string, component: any): boolean {
 function analyzeComponentStability(components: BuiltinComponents): number {
   let stableComponents = 0
   let totalComponents = 0
-  
+
   for (const [key, component] of Object.entries(components)) {
     totalComponents++
-    
+
     if ('error' in component) {
       continue
     }
-    
+
     // Определяем стабильность на основе типа компонента
     if (isStableComponent(key, component)) {
       stableComponents++
     }
   }
-  
+
   return totalComponents > 0 ? stableComponents / totalComponents : 0.5
 }
 
 /**
  * Определяет, является ли компонент стабильным
  */
-function isStableComponent(key: string, component: any): boolean {
+function isStableComponent(key: string, component: Component<unknown>): boolean {
   const stableKeys = [
-    'platform', 'vendor', 'architecture', 'cpuClass', 'hardwareConcurrency',
-    'deviceMemory', 'colorDepth', 'screenResolution', 'timezone'
+    'platform',
+    'vendor',
+    'architecture',
+    'cpuClass',
+    'hardwareConcurrency',
+    'deviceMemory',
+    'colorDepth',
+    'screenResolution',
+    'timezone',
   ]
-  
+
   if (stableKeys.includes(key)) {
     return true
   }
-  
+
   // Компоненты, которые могут изменяться, считаются нестабильными
-  const unstableKeys = [
-    'canvas', 'webGlBasics', 'webGlExtensions', 'audio', 'fonts'
-  ]
-  
+  const unstableKeys = ['canvas', 'webGlBasics', 'webGlExtensions', 'audio', 'fonts']
+
   if (unstableKeys.includes(key)) {
     return false
   }
-  
+
   // По умолчанию считаем компонент стабильным
   return true
 }

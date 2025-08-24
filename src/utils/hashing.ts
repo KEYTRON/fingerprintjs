@@ -9,13 +9,13 @@ import { getUTF8Bytes } from './data'
 const hashCache = new Map<string, string>()
 const MAX_CACHE_SIZE = 1000
 
-// Проверяем поддержку WebAssembly для ускорения хеширования
-let wasmSupported = false
-try {
-  wasmSupported = typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function'
-} catch (e) {
-  wasmSupported = false
-}
+// WebAssembly поддержка проверяется при необходимости
+// let wasmSupported = false
+// try {
+//   wasmSupported = typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function'
+// } catch (e) {
+//   wasmSupported = false
+// }
 
 /**
  * Быстрая проверка на пустую строку
@@ -30,9 +30,12 @@ function isEmptyString(str: string): boolean {
 export function x64hash128(key: string, seed = 0): string {
   // Проверяем кэш
   if (hashCache.has(key)) {
-    return hashCache.get(key)!
+    const cachedValue = hashCache.get(key)
+    if (cachedValue) {
+      return cachedValue
+    }
   }
-  
+
   // Если строка пустая, возвращаем предвычисленный хеш
   if (isEmptyString(key)) {
     const emptyHash = '00000000000000000000000000000000'
@@ -41,7 +44,7 @@ export function x64hash128(key: string, seed = 0): string {
   }
 
   const result = x64hash128Internal(key, seed)
-  
+
   // Сохраняем в кэш (с ограничением размера)
   if (hashCache.size >= MAX_CACHE_SIZE) {
     // Удаляем старые записи
@@ -49,7 +52,7 @@ export function x64hash128(key: string, seed = 0): string {
     hashCache.delete(firstKey)
   }
   hashCache.set(key, result)
-  
+
   return result
 }
 
@@ -195,7 +198,12 @@ function x64hash128Internal(key: string, seed = 0): string {
   x64Add(h1, h2)
   x64Add(h2, h1)
 
-  return ('00000000' + (h1[0] >>> 0).toString(16)).slice(-8) + ('00000000' + (h1[1] >>> 0).toString(16)).slice(-8) + ('00000000' + (h2[0] >>> 0).toString(16)).slice(-8) + ('00000000' + (h2[1] >>> 0).toString(16)).slice(-8)
+  return (
+    ('00000000' + (h1[0] >>> 0).toString(16)).slice(-8) +
+    ('00000000' + (h1[1] >>> 0).toString(16)).slice(-8) +
+    ('00000000' + (h2[0] >>> 0).toString(16)).slice(-8) +
+    ('00000000' + (h2[1] >>> 0).toString(16)).slice(-8)
+  )
 }
 
 /**
@@ -355,6 +363,6 @@ export function clearHashCache(): void {
 export function getHashCacheStats(): { size: number; maxSize: number } {
   return {
     size: hashCache.size,
-    maxSize: MAX_CACHE_SIZE
+    maxSize: MAX_CACHE_SIZE,
   }
 }

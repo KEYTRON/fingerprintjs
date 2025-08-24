@@ -8,15 +8,12 @@ The library supports all the popular installation methods:
 
 ```html
 <script>
-  // Initialize the agent at application startup.
-  // You can also use https://openfpcdn.io/fingerprintjs/v4/esm.min.js
-  const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
-    .then(FingerprintJS => FingerprintJS.load())
+    // Initialize the agent at application startup.
+    // You can also use https://openfpcdn.io/fingerprintjs/v4/esm.min.js
+    const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4').then((FingerprintJS) => FingerprintJS.load())
 
-  // Get the visitor identifier when you need it.
-  fpPromise
-    .then(fp => fp.get())
-    .then(result => console.log(result.visitorId))
+    // Get the visitor identifier when you need it.
+    fpPromise.then((fp) => fp.get()).then((result) => console.log(result.visitorId))
 </script>
 ```
 
@@ -30,31 +27,24 @@ A synchronous code that pauses the other scripts during loading and therefore no
 <!-- Note that we use iife.min.js -->
 <script src="https://openfpcdn.io/fingerprintjs/v4/iife.min.js"></script>
 <script>
-  // Initialize the agent at application startup.
-  var fpPromise = FingerprintJS.load()
+    // Initialize the agent at application startup.
+    var fpPromise = FingerprintJS.load()
 
-  // Analyze the visitor when necessary.
-  fpPromise
-    .then(fp => fp.get())
-    .then(result => console.log(result.visitorId))
+    // Analyze the visitor when necessary.
+    fpPromise.then((fp) => fp.get()).then((result) => console.log(result.visitorId))
 </script>
 ```
 
 ### UMD
 
 ```js
-require(
-  ['https://openfpcdn.io/fingerprintjs/v4/umd.min.js'],
-  FingerprintJS => {
+require(['https://openfpcdn.io/fingerprintjs/v4/umd.min.js'], (FingerprintJS) => {
     // Initialize the agent at application startup.
     const fpPromise = FingerprintJS.load()
 
     // Get the visitor identifier when you need it.
-    fpPromise
-      .then(fp => fp.get())
-      .then(result => console.log(result.visitorId))
-  }
-)
+    fpPromise.then((fp) => fp.get()).then((result) => console.log(result.visitorId))
+})
 ```
 
 ### Webpack/Rollup/NPM/Yarn
@@ -73,10 +63,10 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs'
 const fpPromise = FingerprintJS.load()
 
 ;(async () => {
-  // Get the visitor identifier when you need it.
-  const fp = await fpPromise
-  const result = await fp.get()
-  console.log(result.visitorId)
+    // Get the visitor identifier when you need it.
+    const fp = await fpPromise
+    const result = await fp.get()
+    console.log(result.visitorId)
 })()
 ```
 
@@ -87,9 +77,9 @@ When the `load` function runs, there is a 0.1% chance of sending a request.
 The requests are sent at most once a week from one browser instance (unless the browser cache was cleared).
 A request includes the following information:
 
-- The library version
-- The HTTP headers that the client sends, including the origin and the referrer of the page where the library runs
-- The IP of the client
+-   The library version
+-   The HTTP headers that the client sends, including the origin and the referrer of the page where the library runs
+-   The IP of the client
 
 If you have a TypeScript error that occurs in a FingerprintJS file,
 see the [TypeScript support guide](typescript_support.md).
@@ -103,9 +93,7 @@ const FingerprintJS = require('@fingerprintjs/fingerprintjs')
 const fpPromise = FingerprintJS.load()
 
 // Get the visitor identifier when you need it.
-fpPromise
-  .then(fp => fp.get())
-  .then(result => console.log(result.visitorId))
+fpPromise.then((fp) => fp.get()).then((result) => console.log(result.visitorId))
 ```
 
 ## API
@@ -126,32 +114,30 @@ The returned object format:
 
 ```ts
 interface GetResult {
-  visitorId: string
-  confidence: {
-    score: number
-    comment?: string
-  }
-  components: {
-    [key: string]:
-      { value: any, duration: number } |
-      { error: any, duration: number }
-  }
-  version: string
+    visitorId: string
+    confidence: {
+        score: number
+        comment?: string
+    }
+    components: {
+        [key: string]: { value: any; duration: number } | { error: any; duration: number }
+    }
+    version: string
 }
 ```
 
 The returned object fields:
 
-- `visitorId` The visitor identifier
-- `confidence`.`score` The confidence score.
+-   `visitorId` The visitor identifier
+-   `confidence`.`score` The confidence score.
     This is a number between 0 and 1 that tells how much the agent is sure about the visitor identifier.
     The higher the number, the higher the chance of the visitor identifier to be true.
-- `confidence`.`comment` Additional information for the confidence score. A human-readable text.
-- `components` A dictionary of components that have formed the identifier.
+-   `confidence`.`comment` Additional information for the confidence score. A human-readable text.
+-   `components` A dictionary of components that have formed the identifier.
     The keys are the component names.
     `value` is a component value (in case of success).
     `error` is an error object (in case of an unexpected error during getting the component).
-- `version` The fingerprinting algorithm version which is equal to the library version.
+-   `version` The fingerprinting algorithm version which is equal to the library version.
     See [the version policy guide](version_policy.md) for more details.
 
 See the [extending guide](extending.md) to learn how to remove and add entropy components.

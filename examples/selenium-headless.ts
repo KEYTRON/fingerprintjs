@@ -1,16 +1,16 @@
-import { Builder, By, until, WebDriver } from 'selenium-webdriver';
-import { Options } from 'selenium-webdriver/chrome';
-import { ServiceBuilder } from 'selenium-webdriver/chrome';
+import { Builder, By, until, WebDriver } from 'selenium-webdriver'
+import { Options } from 'selenium-webdriver/chrome'
+// ServiceBuilder не используется в текущей реализации
 
 /**
  * Пример использования Selenium в безголовом режиме
  * Демонстрирует автоматизацию браузера без графического интерфейса
  */
 class SeleniumHeadlessExample {
-  private driver: WebDriver;
+  private driver: WebDriver
 
   constructor() {
-    this.driver = null;
+    this.driver = null
   }
 
   /**
@@ -18,37 +18,34 @@ class SeleniumHeadlessExample {
    */
   async initializeDriver(): Promise<void> {
     try {
-      const chromeOptions = new Options();
-      
-      // Включение безголового режима
-      chromeOptions.addArguments('--headless');
-      chromeOptions.addArguments('--no-sandbox');
-      chromeOptions.addArguments('--disable-dev-shm-usage');
-      chromeOptions.addArguments('--disable-gpu');
-      
-      // Настройки для серверной среды
-      chromeOptions.addArguments('--disable-extensions');
-      chromeOptions.addArguments('--disable-plugins');
-      chromeOptions.addArguments('--disable-images');
-      chromeOptions.addArguments('--disable-javascript-harmony-shipping');
-      
-      // Установка размера окна (важно для безголового режима)
-      chromeOptions.addArguments('--window-size=1920,1080');
-      
-      // Дополнительные настройки для стабильности
-      chromeOptions.addArguments('--disable-web-security');
-      chromeOptions.addArguments('--allow-running-insecure-content');
-      chromeOptions.addArguments('--disable-features=VizDisplayCompositor');
-      
-      this.driver = await new Builder()
-        .forBrowser('chrome')
-        .setChromeOptions(chromeOptions)
-        .build();
+      const chromeOptions = new Options()
 
-      console.log('✅ Драйвер Chrome в безголовом режиме успешно инициализирован');
+      // Включение безголового режима
+      chromeOptions.addArguments('--headless')
+      chromeOptions.addArguments('--no-sandbox')
+      chromeOptions.addArguments('--disable-dev-shm-usage')
+      chromeOptions.addArguments('--disable-gpu')
+
+      // Настройки для серверной среды
+      chromeOptions.addArguments('--disable-extensions')
+      chromeOptions.addArguments('--disable-plugins')
+      chromeOptions.addArguments('--disable-images')
+      chromeOptions.addArguments('--disable-javascript-harmony-shipping')
+
+      // Установка размера окна (важно для безголового режима)
+      chromeOptions.addArguments('--window-size=1920,1080')
+
+      // Дополнительные настройки для стабильности
+      chromeOptions.addArguments('--disable-web-security')
+      chromeOptions.addArguments('--allow-running-insecure-content')
+      chromeOptions.addArguments('--disable-features=VizDisplayCompositor')
+
+      this.driver = await new Builder().forBrowser('chrome').setChromeOptions(chromeOptions).build()
+
+      console.log('✅ Драйвер Chrome в безголовом режиме успешно инициализирован')
     } catch (error) {
-      console.error('❌ Ошибка инициализации драйвера:', error);
-      throw error;
+      console.error('❌ Ошибка инициализации драйвера:', error)
+      throw error
     }
   }
 
@@ -59,42 +56,41 @@ class SeleniumHeadlessExample {
     const websites = [
       { name: 'Google', url: 'https://www.google.com', selector: 'input[name="q"]' },
       { name: 'GitHub', url: 'https://github.com', selector: '.header-search-input' },
-      { name: 'Stack Overflow', url: 'https://stackoverflow.com', selector: '.s-input' }
-    ];
+      { name: 'Stack Overflow', url: 'https://stackoverflow.com', selector: '.s-input' },
+    ]
 
     for (const site of websites) {
       try {
-        console.log(`\n🌐 Тестирование сайта: ${site.name}`);
-        
+        console.log(`\n🌐 Тестирование сайта: ${site.name}`)
+
         // Открытие сайта
-        await this.driver.get(site.url);
-        await this.driver.wait(until.titleContains(''), 10000);
-        
+        await this.driver.get(site.url)
+        await this.driver.wait(until.titleContains(''), 10000)
+
         // Получение информации о странице
-        const title = await this.driver.getTitle();
-        const url = await this.driver.getCurrentUrl();
-        
-        console.log(`   Заголовок: ${title}`);
-        console.log(`   URL: ${url}`);
-        
+        const title = await this.driver.getTitle()
+        const url = await this.driver.getCurrentUrl()
+
+        console.log(`   Заголовок: ${title}`)
+        console.log(`   URL: ${url}`)
+
         // Поиск основного элемента
         try {
-          const element = await this.driver.findElement(By.css(site.selector));
-          const isDisplayed = await element.isDisplayed();
-          console.log(`   Основной элемент найден: ${isDisplayed ? 'Да' : 'Нет'}`);
+          const element = await this.driver.findElement(By.css(site.selector))
+          const isDisplayed = await element.isDisplayed()
+          console.log(`   Основной элемент найден: ${isDisplayed ? 'Да' : 'Нет'}`)
         } catch (error) {
-          console.log(`   Основной элемент не найден: ${site.selector}`);
+          console.log(`   Основной элемент не найден: ${site.selector}`)
         }
-        
+
         // Создание скриншота
-        const screenshotName = `${site.name.toLowerCase()}-screenshot.png`;
-        await this.takeScreenshot(screenshotName);
-        
+        const screenshotName = `${site.name.toLowerCase()}-screenshot.png`
+        await this.takeScreenshot(screenshotName)
+
         // Пауза между сайтами
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 2000))
       } catch (error) {
-        console.error(`   ❌ Ошибка тестирования ${site.name}:`, error.message);
+        console.error(`   ❌ Ошибка тестирования ${site.name}:`, error.message)
       }
     }
   }
@@ -104,40 +100,39 @@ class SeleniumHeadlessExample {
    */
   async testPerformance(): Promise<void> {
     try {
-      console.log('\n⚡ Тестирование производительности...');
-      
-      const startTime = Date.now();
-      
+      console.log('\n⚡ Тестирование производительности...')
+
+      const startTime = Date.now()
+
       // Открытие нескольких вкладок
       for (let i = 0; i < 3; i++) {
-        await this.driver.executeScript(`window.open('https://www.google.com', '_blank');`);
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await this.driver.executeScript(`window.open('https://www.google.com', '_blank');`)
+        await new Promise((resolve) => setTimeout(resolve, 1000))
       }
-      
+
       // Переключение между вкладками
-      const handles = await this.driver.getAllWindowHandles();
+      const handles = await this.driver.getAllWindowHandles()
       for (const handle of handles) {
-        await this.driver.switchTo().window(handle);
-        const title = await this.driver.getTitle();
-        console.log(`   Вкладка: ${title}`);
+        await this.driver.switchTo().window(handle)
+        const title = await this.driver.getTitle()
+        console.log(`   Вкладка: ${title}`)
       }
-      
+
       // Закрытие дополнительных вкладок
       for (let i = 1; i < handles.length; i++) {
-        await this.driver.switchTo().window(handles[i]);
-        await this.driver.close();
+        await this.driver.switchTo().window(handles[i])
+        await this.driver.close()
       }
-      
+
       // Возврат к основной вкладке
-      await this.driver.switchTo().window(handles[0]);
-      
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-      
-      console.log(`   Время выполнения: ${duration}ms`);
-      
+      await this.driver.switchTo().window(handles[0])
+
+      const endTime = Date.now()
+      const duration = endTime - startTime
+
+      console.log(`   Время выполнения: ${duration}ms`)
     } catch (error) {
-      console.error('❌ Ошибка тестирования производительности:', error);
+      console.error('❌ Ошибка тестирования производительности:', error)
     }
   }
 
@@ -146,11 +141,11 @@ class SeleniumHeadlessExample {
    */
   async testJavaScriptExecution(): Promise<void> {
     try {
-      console.log('\n🔧 Тестирование выполнения JavaScript...');
-      
+      console.log('\n🔧 Тестирование выполнения JavaScript...')
+
       // Открытие простой страницы
-      await this.driver.get('data:text/html,<html><body><div id="test">Hello World</div></body></html>');
-      
+      await this.driver.get('data:text/html,<html><body><div id="test">Hello World</div></body></html>')
+
       // Выполнение JavaScript
       const result = await this.driver.executeScript(`
         const element = document.getElementById('test');
@@ -160,16 +155,15 @@ class SeleniumHeadlessExample {
           id: element.id,
           timestamp: Date.now()
         };
-      `);
-      
-      console.log('   Результат выполнения JavaScript:');
-      console.log(`     Текст: ${result.text}`);
-      console.log(`     Тег: ${result.tagName}`);
-      console.log(`     ID: ${result.id}`);
-      console.log(`     Время: ${new Date(result.timestamp).toISOString()}`);
-      
+      `)
+
+      console.log('   Результат выполнения JavaScript:')
+      console.log(`     Текст: ${result.text}`)
+      console.log(`     Тег: ${result.tagName}`)
+      console.log(`     ID: ${result.id}`)
+      console.log(`     Время: ${new Date(result.timestamp).toISOString()}`)
     } catch (error) {
-      console.error('❌ Ошибка тестирования JavaScript:', error);
+      console.error('❌ Ошибка тестирования JavaScript:', error)
     }
   }
 
@@ -178,28 +172,27 @@ class SeleniumHeadlessExample {
    */
   async testNetworkRequests(): Promise<void> {
     try {
-      console.log('\n🌐 Тестирование сетевых запросов...');
-      
+      console.log('\n🌐 Тестирование сетевых запросов...')
+
       // Открытие страницы с API
-      await this.driver.get('https://httpbin.org/get');
-      
+      await this.driver.get('https://httpbin.org/get')
+
       // Получение содержимого страницы
-      const body = await this.driver.findElement(By.tagName('body'));
-      const text = await body.getText();
-      
+      const body = await this.driver.findElement(By.tagName('body'))
+      const text = await body.getText()
+
       // Парсинг JSON ответа
       try {
-        const jsonResponse = JSON.parse(text);
-        console.log('   Ответ API получен:');
-        console.log(`     URL: ${jsonResponse.url}`);
-        console.log(`     User-Agent: ${jsonResponse.headers['User-Agent']}`);
-        console.log(`     Accept: ${jsonResponse.headers['Accept']}`);
+        const jsonResponse = JSON.parse(text)
+        console.log('   Ответ API получен:')
+        console.log(`     URL: ${jsonResponse.url}`)
+        console.log(`     User-Agent: ${jsonResponse.headers['User-Agent']}`)
+        console.log(`     Accept: ${jsonResponse.headers['Accept']}`)
       } catch (parseError) {
-        console.log('   Ответ не является валидным JSON');
+        console.log('   Ответ не является валидным JSON')
       }
-      
     } catch (error) {
-      console.error('❌ Ошибка тестирования сетевых запросов:', error);
+      console.error('❌ Ошибка тестирования сетевых запросов:', error)
     }
   }
 
@@ -208,12 +201,12 @@ class SeleniumHeadlessExample {
    */
   async takeScreenshot(filename: string): Promise<void> {
     try {
-      const screenshot = await this.driver.takeScreenshot();
-      const fs = require('fs');
+      const screenshot = await this.driver.takeScreenshot()
+      const fs = await import('fs');
       fs.writeFileSync(filename, screenshot, 'base64');
-      console.log(`   ✅ Скриншот сохранен: ${filename}`);
+      console.log(`   ✅ Скриншот сохранен: ${filename}`)
     } catch (error) {
-      console.error(`   ❌ Ошибка создания скриншота ${filename}:`, error);
+      console.error(`   ❌ Ошибка создания скриншота ${filename}:`, error)
     }
   }
 
@@ -222,8 +215,8 @@ class SeleniumHeadlessExample {
    */
   async getBrowserInfo(): Promise<void> {
     try {
-      console.log('\n📊 Информация о браузере:');
-      
+      console.log('\n📊 Информация о браузере:')
+
       // Выполнение JavaScript для получения информации
       const info = await this.driver.executeScript(`
         return {
@@ -245,16 +238,15 @@ class SeleniumHeadlessExample {
             outerHeight: window.outerHeight
           }
         };
-      `);
-      
-      console.log(`   User-Agent: ${info.userAgent}`);
-      console.log(`   Язык: ${info.language}`);
-      console.log(`   Платформа: ${info.platform}`);
-      console.log(`   Размер экрана: ${info.screen.width}x${info.screen.height}`);
-      console.log(`   Размер окна: ${info.window.innerWidth}x${info.window.innerHeight}`);
-      
+      `)
+
+      console.log(`   User-Agent: ${info.userAgent}`)
+      console.log(`   Язык: ${info.language}`)
+      console.log(`   Платформа: ${info.platform}`)
+      console.log(`   Размер экрана: ${info.screen.width}x${info.screen.height}`)
+      console.log(`   Размер окна: ${info.window.innerWidth}x${info.window.innerHeight}`)
     } catch (error) {
-      console.error('❌ Ошибка получения информации о браузере:', error);
+      console.error('❌ Ошибка получения информации о браузере:', error)
     }
   }
 
@@ -264,12 +256,12 @@ class SeleniumHeadlessExample {
   async closeBrowser(): Promise<void> {
     try {
       if (this.driver) {
-        await this.driver.quit();
-        console.log('✅ Браузер закрыт');
+        await this.driver.quit()
+        console.log('✅ Браузер закрыт')
       }
     } catch (error) {
-      console.error('❌ Ошибка закрытия браузера:', error);
-      throw error;
+      console.error('❌ Ошибка закрытия браузера:', error)
+      throw error
     }
   }
 
@@ -278,41 +270,40 @@ class SeleniumHeadlessExample {
    */
   async run(): Promise<void> {
     try {
-      console.log('🚀 Запуск примера Selenium в безголовом режиме...');
-      
+      console.log('🚀 Запуск примера Selenium в безголовом режиме...')
+
       // Инициализация драйвера
-      await this.initializeDriver();
-      
+      await this.initializeDriver()
+
       // Получение информации о браузере
-      await this.getBrowserInfo();
-      
+      await this.getBrowserInfo()
+
       // Тестирование JavaScript
-      await this.testJavaScriptExecution();
-      
+      await this.testJavaScriptExecution()
+
       // Тестирование сетевых запросов
-      await this.testNetworkRequests();
-      
+      await this.testNetworkRequests()
+
       // Тестирование веб-сайтов
-      await this.testWebsites();
-      
+      await this.testWebsites()
+
       // Тестирование производительности
-      await this.testPerformance();
-      
-      console.log('\n✅ Пример Selenium в безголовом режиме успешно выполнен!');
-      
+      await this.testPerformance()
+
+      console.log('\n✅ Пример Selenium в безголовом режиме успешно выполнен!')
     } catch (error) {
-      console.error('❌ Ошибка выполнения примера:', error);
+      console.error('❌ Ошибка выполнения примера:', error)
     } finally {
       // Закрытие браузера
-      await this.closeBrowser();
+      await this.closeBrowser()
     }
   }
 }
 
 // Запуск примера
 if (require.main === module) {
-  const example = new SeleniumHeadlessExample();
-  example.run().catch(console.error);
+  const example = new SeleniumHeadlessExample()
+  example.run().catch(console.error)
 }
 
-export default SeleniumHeadlessExample;
+export default SeleniumHeadlessExample

@@ -4,11 +4,11 @@
 
 ## 📋 Содержание
 
-- [Установка зависимостей](#установка-зависимостей)
-- [Примеры](#примеры)
-- [Запуск примеров](#запуск-примеров)
-- [Настройка окружения](#настройка-окружения)
-- [Возможные проблемы](#возможные-проблемы)
+-   [Установка зависимостей](#установка-зависимостей)
+-   [Примеры](#примеры)
+-   [Запуск примеров](#запуск-примеров)
+-   [Настройка окружения](#настройка-окружения)
+-   [Возможные проблемы](#возможные-проблемы)
 
 ## 🚀 Установка зависимостей
 
@@ -21,6 +21,7 @@ yarn install
 ### 2. Установка драйверов браузеров
 
 #### Chrome WebDriver
+
 ```bash
 # Автоматически устанавливается через chromedriver пакет
 # Или вручную:
@@ -32,6 +33,7 @@ sudo chmod +x /usr/local/bin/chromedriver
 ```
 
 #### Firefox WebDriver (GeckoDriver)
+
 ```bash
 # Автоматически устанавливается через geckodriver пакет
 # Или вручную:
@@ -46,14 +48,16 @@ sudo chmod +x /usr/local/bin/geckodriver
 ### 1. Базовый пример (`selenium-basic.ts`)
 
 Демонстрирует основные возможности Selenium WebDriver:
-- Инициализация драйвера Chrome
-- Открытие веб-страниц
-- Поиск элементов
-- Клики и ввод текста
-- Создание скриншотов
-- Обработка ошибок
+
+-   Инициализация драйвера Chrome
+-   Открытие веб-страниц
+-   Поиск элементов
+-   Клики и ввод текста
+-   Создание скриншотов
+-   Обработка ошибок
 
 **Запуск:**
+
 ```bash
 yarn selenium:basic
 ```
@@ -61,13 +65,15 @@ yarn selenium:basic
 ### 2. Пример с FingerprintJS (`selenium-fingerprint.ts`)
 
 Специализированный пример для тестирования FingerprintJS:
-- Создание тестовой HTML страницы
-- Генерация отпечатков браузера
-- Тестирование стабильности отпечатков
-- Сбор информации о браузере
-- Анализ компонентов отпечатка
+
+-   Создание тестовой HTML страницы
+-   Генерация отпечатков браузера
+-   Тестирование стабильности отпечатков
+-   Сбор информации о браузере
+-   Анализ компонентов отпечатка
 
 **Запуск:**
+
 ```bash
 yarn selenium:fingerprint
 ```
@@ -75,13 +81,15 @@ yarn selenium:fingerprint
 ### 3. Безголовый режим (`selenium-headless.ts`)
 
 Пример для автоматизации без графического интерфейса:
-- Запуск браузера в фоновом режиме
-- Тестирование производительности
-- Выполнение JavaScript
-- Тестирование сетевых запросов
-- Идеально для CI/CD и серверов
+
+-   Запуск браузера в фоновом режиме
+-   Тестирование производительности
+-   Выполнение JavaScript
+-   Тестирование сетевых запросов
+-   Идеально для CI/CD и серверов
 
 **Запуск:**
+
 ```bash
 yarn selenium:headless
 ```
@@ -89,13 +97,15 @@ yarn selenium:headless
 ### 4. Упрощенный пример (`selenium-simple.ts`)
 
 Простой и надежный пример для начала работы:
-- Создание локальной HTML страницы
-- Работа с формами
-- Автоматическое заполнение полей
-- Создание скриншотов
-- Идеально для обучения и тестирования
+
+-   Создание локальной HTML страницы
+-   Работа с формами
+-   Автоматическое заполнение полей
+-   Создание скриншотов
+-   Идеально для обучения и тестирования
 
 **Запуск:**
+
 ```bash
 yarn selenium:simple
 ```
@@ -103,6 +113,7 @@ yarn selenium:simple
 ## 🎯 Запуск примеров
 
 ### Все примеры сразу
+
 ```bash
 yarn selenium:basic
 yarn selenium:fingerprint
@@ -111,6 +122,7 @@ yarn selenium:simple
 ```
 
 ### Отдельные примеры
+
 ```bash
 # Базовый функционал
 yarn selenium:basic
@@ -148,15 +160,15 @@ export CHROME_DISABLE_GPU=true  # Отключение GPU
 
 ```json
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    }
 }
 ```
 
@@ -165,39 +177,39 @@ export CHROME_DISABLE_GPU=true  # Отключение GPU
 ### Настройка Chrome опций
 
 ```typescript
-import { Options } from 'selenium-webdriver/chrome';
+import { Options } from 'selenium-webdriver/chrome'
 
-const chromeOptions = new Options();
+const chromeOptions = new Options()
 
 // Производительность
-chromeOptions.addArguments('--no-sandbox');
-chromeOptions.addArguments('--disable-dev-shm-usage');
-chromeOptions.addArguments('--disable-gpu');
+chromeOptions.addArguments('--no-sandbox')
+chromeOptions.addArguments('--disable-dev-shm-usage')
+chromeOptions.addArguments('--disable-gpu')
 
 // Безголовый режим
-chromeOptions.addArguments('--headless');
+chromeOptions.addArguments('--headless')
 
 // Размер окна
-chromeOptions.addArguments('--window-size=1920,1080');
+chromeOptions.addArguments('--window-size=1920,1080')
 
 // Дополнительные настройки
-chromeOptions.addArguments('--disable-extensions');
-chromeOptions.addArguments('--disable-plugins');
+chromeOptions.addArguments('--disable-extensions')
+chromeOptions.addArguments('--disable-plugins')
 ```
 
 ### Настройка Firefox опций
 
 ```typescript
-import { Options } from 'selenium-webdriver/firefox';
+import { Options } from 'selenium-webdriver/firefox'
 
-const firefoxOptions = new Options();
+const firefoxOptions = new Options()
 
 // Безголовый режим
-firefoxOptions.headless();
+firefoxOptions.headless()
 
 // Настройки профиля
-firefoxOptions.setPreference('dom.webdriver.enabled', false);
-firefoxOptions.setPreference('useAutomationExtension', false);
+firefoxOptions.setPreference('dom.webdriver.enabled', false)
+firefoxOptions.setPreference('useAutomationExtension', false)
 ```
 
 ## 🐛 Возможные проблемы
@@ -205,6 +217,7 @@ firefoxOptions.setPreference('useAutomationExtension', false);
 ### 1. Ошибка "ChromeDriver executable needs to be in PATH"
 
 **Решение:**
+
 ```bash
 # Установить ChromeDriver глобально
 sudo apt-get install chromium-chromedriver
@@ -216,6 +229,7 @@ export PATH=$PATH:/path/to/chromedriver
 ### 2. Ошибка "session not created: This version of ChromeDriver only supports Chrome version X"
 
 **Решение:**
+
 ```bash
 # Обновить Chrome до последней версии
 sudo apt-get update
@@ -227,14 +241,16 @@ sudo apt-get install google-chrome-stable
 ### 3. Ошибка "DevToolsActivePort file doesn't exist"
 
 **Решение:**
+
 ```typescript
-chromeOptions.addArguments('--remote-debugging-port=9222');
-chromeOptions.addArguments('--disable-dev-shm-usage');
+chromeOptions.addArguments('--remote-debugging-port=9222')
+chromeOptions.addArguments('--disable-dev-shm-usage')
 ```
 
 ### 4. Проблемы с правами доступа
 
 **Решение:**
+
 ```bash
 # Дать права на выполнение
 sudo chmod +x /usr/local/bin/chromedriver
@@ -249,20 +265,20 @@ sudo chown $USER:$USER /usr/local/bin/chromedriver
 ### Включение подробного логирования
 
 ```typescript
-import { logging } from 'selenium-webdriver';
+import { logging } from 'selenium-webdriver'
 
 // Настройка логирования
-logging.installConsoleHandler();
-logging.getLogger('webdriver.http').setLevel(logging.Level.ALL);
+logging.installConsoleHandler()
+logging.getLogger('webdriver.http').setLevel(logging.Level.ALL)
 ```
 
 ### Создание отчетов
 
 ```typescript
 // Сохранение логов в файл
-const fs = require('fs');
-const logs = await this.driver.manage().logs().get('browser');
-fs.writeFileSync('browser-logs.json', JSON.stringify(logs, null, 2));
+const fs = require('fs')
+const logs = await this.driver.manage().logs().get('browser')
+fs.writeFileSync('browser-logs.json', JSON.stringify(logs, null, 2))
 ```
 
 ## 🚀 Интеграция с CI/CD
@@ -273,22 +289,22 @@ fs.writeFileSync('browser-logs.json', JSON.stringify(logs, null, 2));
 name: Selenium Tests
 on: [push, pull_request]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: yarn install
-      - name: Install Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-      - name: Run Selenium tests
-        run: yarn selenium:headless
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '18'
+            - name: Install dependencies
+              run: yarn install
+            - name: Install Chrome
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y google-chrome-stable
+            - name: Run Selenium tests
+              run: yarn selenium:headless
 ```
 
 ### Docker
@@ -311,10 +327,10 @@ CMD ["npm", "run", "selenium:headless"]
 
 ## 📚 Дополнительные ресурсы
 
-- [Selenium WebDriver Documentation](https://selenium.dev/documentation/webdriver/)
-- [ChromeDriver Documentation](https://chromedriver.chromium.org/)
-- [GeckoDriver Documentation](https://firefox-source-docs.mozilla.org/testing/geckodriver/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+-   [Selenium WebDriver Documentation](https://selenium.dev/documentation/webdriver/)
+-   [ChromeDriver Documentation](https://chromedriver.chromium.org/)
+-   [GeckoDriver Documentation](https://firefox-source-docs.mozilla.org/testing/geckodriver/)
+-   [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
 ## 🤝 Поддержка
 

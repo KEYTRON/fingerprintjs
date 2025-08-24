@@ -46,4 +46,4 @@ jobs:
         uses: rickstaa/action-create-tag@v1
         with:
           tag: v${{ steps.version.outputs.version }}
-          message: " "
+          message: ' '

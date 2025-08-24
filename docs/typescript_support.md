@@ -19,13 +19,13 @@ If you face a TypeScript error that occurs in a `.d.ts` file provided by Fingerp
 ([example 1](https://github.com/fingerprintjs/fingerprintjs/issues/651), [example 2](https://github.com/fingerprintjs/fingerprintjs/issues/653)),
 consider any of these solutions:
 
-- Update the TypeScript package in your project to version 5.1 or newer
+-   Update the TypeScript package in your project to version 5.1 or newer
     ```bash
     npm i typescript@^5.1
     # or
     yarn add typescript@^5.1
     ```
-- Prevent TypeScript from using the library types. To do it, replace
+-   Prevent TypeScript from using the library types. To do it, replace
     ```ts
     import ... from '@fingerprintjs/fingerprintjs'
     ```
