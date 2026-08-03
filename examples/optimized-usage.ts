@@ -2,14 +2,14 @@
  * Пример использования оптимизированных функций FingerprintJS
  */
 
-import { 
-  load, 
-  clearHashCache, 
+import {
+  load,
+  clearHashCache,
   getHashCacheStats,
   parallelWithLimit,
   benchmark,
   measureTime,
-  profileMemory
+  profileMemory,
 } from '@fingerprintjs/fingerprintjs'
 
 async function demonstrateOptimizations() {
@@ -18,10 +18,10 @@ async function demonstrateOptimizations() {
   // 1. Загрузка с оптимизированными настройками
   console.log('1. Загрузка агента с оптимизациями...')
   const agent = await load({
-    enableCache: true,        // Включить кэширование
-    cacheTTL: 300000,         // TTL кэша 5 минут
-    delayFallback: 25,        // Уменьшенная задержка
-    debug: false              // Отключить отладку для производительности
+    enableCache: true, // Включить кэширование
+    cacheTTL: 300000, // TTL кэша 5 минут
+    delayFallback: 25, // Уменьшенная задержка
+    debug: false, // Отключить отладку для производительности
   })
 
   // 2. Первый вызов - медленный, но создает кэш
@@ -29,7 +29,7 @@ async function demonstrateOptimizations() {
   const firstResult = await measureTime('First call', async () => {
     return await agent.get()
   })
-  
+
   console.log(`Visitor ID: ${firstResult.visitorId}`)
   console.log(`Confidence: ${firstResult.confidence.score}`)
 
@@ -47,30 +47,34 @@ async function demonstrateOptimizations() {
   // 5. Демонстрация параллельной обработки
   console.log('\n5. Демонстрация параллельной обработки...')
   const items = Array.from({ length: 10 }, (_, i) => `Item ${i}`)
-  
+
   const parallelResults = await measureTime('Parallel processing', async () => {
     return await parallelWithLimit(
       items,
       async (item) => {
         // Имитируем асинхронную обработку
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 100))
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 100))
         return `${item} processed`
       },
-      3 // Максимум 3 одновременных операции
+      3, // Максимум 3 одновременных операции
     )
   })
-  
+
   console.log(`Processed ${parallelResults.length} items in parallel`)
 
   // 6. Бенчмарк производительности
   console.log('\n6. Бенчмарк производительности...')
-  const benchmarkResult = await benchmark('Fingerprint generation', async () => {
-    return await agent.get()
-  }, { 
-    iterations: 10,
-    memoryTracking: true 
-  })
-  
+  const benchmarkResult = await benchmark(
+    'Fingerprint generation',
+    async () => {
+      return await agent.get()
+    },
+    {
+      iterations: 10,
+      memoryTracking: true,
+    },
+  )
+
   console.log(`Benchmark results:`)
   console.log(`  Average time: ${benchmarkResult.averageTime.toFixed(3)}ms`)
   console.log(`  Min time: ${benchmarkResult.minTime.toFixed(3)}ms`)
@@ -93,18 +97,18 @@ async function demonstrateOptimizations() {
   console.log('\n8. Очистка кэша...')
   clearHashCache()
   console.log('Hash cache cleared')
-  
+
   const finalCacheStats = getHashCacheStats()
   console.log(`Final cache size: ${finalCacheStats.size}`)
 
   console.log('\n✅ Демонстрация завершена!')
-  
+
   return {
     firstResult,
     secondResult,
     cacheStats,
     parallelResults,
-    benchmarkResult
+    benchmarkResult,
   }
 }
 
@@ -115,30 +119,39 @@ async function comparePerformance() {
   // Тест без кэша
   const agentWithoutCache = await load({
     enableCache: false,
-    delayFallback: 50
+    delayFallback: 50,
   })
 
-  const withoutCacheResult = await benchmark('Without cache', async () => {
-    return await agentWithoutCache.get()
-  }, { iterations: 5 })
+  const withoutCacheResult = await benchmark(
+    'Without cache',
+    async () => {
+      return await agentWithoutCache.get()
+    },
+    { iterations: 5 },
+  )
 
   // Тест с кэшем
   const agentWithCache = await load({
     enableCache: true,
     cacheTTL: 300000,
-    delayFallback: 25
+    delayFallback: 25,
   })
 
-  const withCacheResult = await benchmark('With cache', async () => {
-    return await agentWithCache.get()
-  }, { iterations: 5 })
+  const withCacheResult = await benchmark(
+    'With cache',
+    async () => {
+      return await agentWithCache.get()
+    },
+    { iterations: 5 },
+  )
 
   // Сравнение результатов
   console.log('Performance comparison:')
   console.log(`Without cache: ${withoutCacheResult.averageTime.toFixed(3)}ms average`)
   console.log(`With cache:    ${withCacheResult.averageTime.toFixed(3)}ms average`)
-  
-  const improvement = ((withoutCacheResult.averageTime - withCacheResult.averageTime) / withoutCacheResult.averageTime * 100)
+
+  const improvement =
+    ((withoutCacheResult.averageTime - withCacheResult.averageTime) / withoutCacheResult.averageTime) * 100
   console.log(`Improvement:   ${improvement.toFixed(1)}% faster with cache`)
 }
 
@@ -150,7 +163,7 @@ async function demonstrateErrorHandling() {
     // Создаем агент с неверными настройками для демонстрации
     const agent = await load({
       delayFallback: -1, // Неверное значение
-      enableCache: true
+      enableCache: true,
     })
 
     const result = await agent.get()
@@ -172,12 +185,7 @@ async function main() {
 }
 
 // Экспорт для использования в других модулях
-export {
-  demonstrateOptimizations,
-  comparePerformance,
-  demonstrateErrorHandling,
-  main
-}
+export { demonstrateOptimizations, comparePerformance, demonstrateErrorHandling, main }
 
 // Запуск, если файл выполняется напрямую
 if (typeof window !== 'undefined') {

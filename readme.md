@@ -35,20 +35,19 @@ Now, try visiting the same page in private / incognito mode and notice how the v
 
 ```html
 <script>
-  // Initialize the agent at application startup.
-  // If you're using an ad blocker or Brave/Firefox, this import will not work.
-  // Please use the NPM package instead: https://t.ly/ORyXk
-  const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
-    .then(FingerprintJS => FingerprintJS.load())
+    // Initialize the agent at application startup.
+    // If you're using an ad blocker or Brave/Firefox, this import will not work.
+    // Please use the NPM package instead: https://t.ly/ORyXk
+    const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4').then((FingerprintJS) => FingerprintJS.load())
 
-  // Get the visitor identifier when you need it.
-  fpPromise
-    .then(fp => fp.get())
-    .then(result => {
-      // This is the visitor identifier:
-      const visitorId = result.visitorId
-      console.log(visitorId)
-    })
+    // Get the visitor identifier when you need it.
+    fpPromise
+        .then((fp) => fp.get())
+        .then((result) => {
+            // This is the visitor identifier:
+            const visitorId = result.visitorId
+            console.log(visitorId)
+        })
 </script>
 ```
 
@@ -96,11 +95,11 @@ Check out our [comparison table](docs/comparison.md) for a detailed breakdown of
 
 ## Migrating to v4
 
-| Migrating from | Migration Guide | Documentation |
-|----------|-----------|-----------|
-| **v3** | [Migrating from v3 to v4](docs/migration/v3_v4.md) | [v3 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/v3) |
-| **v2** | [Migrating from v2 to v4](docs/migration/v2_v4.md) | [v2 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/v2) |
-| **v1** | [Migrating from v1 to v4](docs/migration/v1_v4.md) | [v1 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/1.8.6) |
+| Migrating from | Migration Guide                                    | Documentation                                                                 |
+| -------------- | -------------------------------------------------- | ----------------------------------------------------------------------------- |
+| **v3**         | [Migrating from v3 to v4](docs/migration/v3_v4.md) | [v3 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/v3)    |
+| **v2**         | [Migrating from v2 to v4](docs/migration/v2_v4.md) | [v2 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/v2)    |
+| **v1**         | [Migrating from v1 to v4](docs/migration/v1_v4.md) | [v1 documentation](https://github.com/fingerprintjs/fingerprintjs/tree/1.8.6) |
 
 ## Version policy
 

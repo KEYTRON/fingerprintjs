@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Selenium Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+      .form-group {
+        margin: 20px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+      }
+      button {
+        background: #4caf50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 5px;
+        transition: background 0.3s;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .result {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 10px;
+        border-left: 4px solid #4caf50;
+      }
+      .hidden {
+        display: none;
+      }
+      .success {
+        color: #4caf50;
+        font-weight: bold;
+      }
+      .error {
+        color: #f44336;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 Selenium Test Page</h1>
+      <p>Эта страница создана для демонстрации возможностей Selenium WebDriver.</p>
+
+      <div class="form-group">
+        <label for="name">Имя:</label>
+        <input type="text" id="name" name="name" placeholder="Введите ваше имя" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Введите ваш email" />
+      </div>
+
+      <div class="form-group">
+        <label for="message">Сообщение:</label>
+        <textarea id="message" name="message" rows="4" placeholder="Введите ваше сообщение"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="country">Страна:</label>
+        <select id="country" name="country">
+          <option value="">Выберите страну</option>
+          <option value="russia">Россия</option>
+          <option value="usa">США</option>
+          <option value="germany">Германия</option>
+          <option value="france">Франция</option>
+          <option value="japan">Япония</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <button id="submitBtn" onclick="submitForm()">Отправить</button>
+        <button id="clearBtn" onclick="clearForm()">Очистить</button>
+        <button id="showInfoBtn" onclick="showBrowserInfo()">Информация о браузере</button>
+      </div>
+
+      <div id="result" class="result hidden"></div>
+
+      <div id="browserInfo" class="result hidden"></div>
+    </div>
+
+    <script>
+      function submitForm() {
+        const name = document.getElementById('name').value
+        const email = document.getElementById('email').value
+        const message = document.getElementById('message').value
+        const country = document.getElementById('country').value
+
+        if (!name || !email || !message || !country) {
+          showResult('Пожалуйста, заполните все поля!', 'error')
+          return
+        }
+
+        const result = `Форма успешно отправлена!\n\nИмя: ${name}\nEmail: ${email}\nСтрана: ${country}\nСообщение: ${message}`
+        showResult(result, 'success')
+      }
+
+      function clearForm() {
+        document.getElementById('name').value = ''
+        document.getElementById('email').value = ''
+        document.getElementById('message').value = ''
+        document.getElementById('country').value = ''
+        document.getElementById('result').classList.add('hidden')
+        document.getElementById('browserInfo').classList.add('hidden')
+      }
+
+      function showBrowserInfo() {
+        const info = {
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+          platform: navigator.platform,
+          cookieEnabled: navigator.cookieEnabled,
+          onLine: navigator.onLine,
+          screen: {
+            width: screen.width,
+            height: screen.height,
+            availWidth: screen.availWidth,
+            availHeight: screen.availHeight,
+          },
+          window: {
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight,
+            outerWidth: window.outerWidth,
+            outerHeight: window.outerHeight,
+          },
+          timestamp: new Date().toISOString(),
+        }
+
+        const infoDiv = document.getElementById('browserInfo')
+        infoDiv.innerHTML = `
+                      <h3>🌐 Информация о браузере:</h3>
+                      <pre>${JSON.stringify(info, null, 2)}</pre>
+                  `
+        infoDiv.classList.remove('hidden')
+      }
+
+      function showResult(message, type) {
+        const resultDiv = document.getElementById('result')
+        resultDiv.innerHTML = `<span class="${type}">${message}</span>`
+        resultDiv.classList.remove('hidden')
+      }
+
+      // Автоматическое заполнение формы для демонстрации
+      window.addEventListener('load', function () {
+        setTimeout(() => {
+          document.getElementById('name').value = 'Иван Иванов'
+          document.getElementById('email').value = 'ivan@example.com'
+          document.getElementById('message').value = 'Это тестовое сообщение для демонстрации Selenium!'
+          document.getElementById('country').value = 'russia'
+        }, 1000)
+      })
+    </script>
+  </body>
+</html>
